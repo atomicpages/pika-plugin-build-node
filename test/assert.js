@@ -14,6 +14,7 @@ const assert = (assertion, ...messages) => {
 
 try {
     assert(fs.existsSync(pkg), 'pkg directory expected to exist');
+    console.log('✔', 'pkg directory expected to exist');
 
     assert(
         Array.prototype.includes.apply(folders, [
@@ -29,6 +30,8 @@ try {
         )}\n\nbut saw:\n\n${JSON.stringify(folders, null, 4)}`
     );
 
+    console.log('✔', 'all folders exists');
+
     assert(
         fs.readFileSync(path.join(__dirname, 'pkg/dist-node/index.js')).toString() ===
             `'use strict';
@@ -40,6 +43,8 @@ console.log(foo$1);
 `,
         'FIles do not match'
     );
+
+    console.log('✔', 'transpiled output matches expected result');
 } catch (e) {
     console.error(e.messages);
     process.exit(1);

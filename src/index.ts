@@ -9,7 +9,7 @@ import builtinModules from 'builtin-modules';
 import json from '@rollup/plugin-json';
 import rollupBabel from 'rollup-plugin-babel';
 
-import { manifest as baseManifest, beforeJob as baseBeforeJob } from '@pika/plugin-build-node';
+export { manifest, beforeJob } from '@pika/plugin-build-node';
 
 import { BuilderOptions as PikaBuilderOptions } from '@pika/types';
 import { rollup } from 'rollup';
@@ -47,9 +47,6 @@ function processPlugins(plugins?: Plugins) {
         return m;
     });
 }
-
-export const manifest = baseManifest;
-export const beforeJob = baseBeforeJob;
 
 export async function build({ out, reporter, options = {} }: BuilderOptions): Promise<void> {
     const writeToNode = path.join(out, 'dist-node', 'index.js');
