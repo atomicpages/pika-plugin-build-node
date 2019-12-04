@@ -1,6 +1,6 @@
 {
     "name": "@djthoms/pika-plugin-build-node",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A @pika/pack plugin: an extension of @pika/plugin-build-node that supports rollup plugin customization.",
     "main": "pkg/dist-node/index.js",
     "scripts": {
