@@ -17,7 +17,7 @@ try {
 
     assert(
         Array.prototype.includes.apply(folders, [
-            'ddist-node',
+            'dist-node',
             'dist-src',
             'dist-types',
             'package.json',
