@@ -1,4 +1,4 @@
-# @djthoms/plugin-build-node
+# @djthoms/pika-plugin-build-node
 
 > **Note:** this plugin in intended to be used with `@pika/plugin-ts-standard-pkg`. If you're using `@pika/plugin-standard-pkg` see the section for how you can configure that pipeline.
 
@@ -19,9 +19,9 @@ The main motivation is to support JSON bundling and provide a way to add extra r
 
 ```sh
 # npm:
-npm install @pika/pack @pika/plugin-build-node @djthoms/plugin-build-node --save-dev
+npm install @pika/pack @pika/plugin-build-node @djthoms/pika-plugin-build-node --save-dev
 # yarn:
-yarn add @pika/pack @pika/plugin-build-node @djthoms/plugin-build-node --dev
+yarn add @pika/pack @pika/plugin-build-node @djthoms/pika-plugin-build-node --dev
 ```
 
 Note: `@pika/pack` and `@pika/plugin-build-node` are peer dependencies -- you need to install these for this plugin to work.
@@ -40,7 +40,7 @@ Note: `@pika/pack` and `@pika/plugin-build-node` are peer dependencies -- you ne
                 "@pika/plugin-ts-standard-pkg"
             ],
             [
-                "@djthoms/plugin-build-node", // calls @pika/plugin-build-node internally
+                "@djthoms/pika-plugin-build-node", // calls @pika/plugin-build-node internally
                 {
                     "plugins": [
                         "@rollup/plugin-beep",
@@ -80,7 +80,7 @@ For more information about @pika/pack & help getting started, [check out the mai
 
 ## Using with `@pika/plugin-standard-pkg`
 
-`@djthoms/plugin-build-node` is not intended to be used with `@pika/plugin-standard-pkg`. If you want to import JSON files, for example, you can accomplish this by tweaking your pipeline and `.babelrc`:
+`@djthoms/pika-plugin-build-node` is not intended to be used with `@pika/plugin-standard-pkg`. If you want to import JSON files, for example, you can accomplish this by tweaking your pipeline and `.babelrc`:
 
 ```json
 {
