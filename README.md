@@ -30,7 +30,7 @@ Note: `@pika/pack` and `@pika/plugin-build-node` are peer dependencies -- you ne
 
 > Disclaimer: This plugin is for advanced usage only. Consider alternatives before resorting to this plugin. Refrain from overriding the default babel settings unless absolutely necessary.
 
-```json
+```jsonc
 {
     "name": "example-package-json",
     "version": "1.0.0",
