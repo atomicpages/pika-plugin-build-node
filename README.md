@@ -1,19 +1,19 @@
 # @djthoms/plugin-build-node
 
+> **Note:** this plugin in intended to be used with `@pika/plugin-ts-standard-pkg`. If you're using `@pika/plugin-standard-pkg` see the section for how you can configure that pipeline.
+
 > A [@pika/pack](https://github.com/pikapkg/pack) build plugin.
 > Adds a Node.js distribution to your package, built & optimized to run on [Node.js](https://nodejs.org/). If no other distribution is included with your package, many other tools & bundlers can understand this format as well.
 
 In addition to all the great things pika offers, this plugin is a super set of the `@pika/plugin-bundle-node` plugin, providing bundle support for JSON files and offering you the ability to add extra rollup plugins to the build flow for your CJS modules.
 
 ## Motivation
+
 The main motivation is to support JSON bundling and provide a way to add extra rollup plugins.
 
 1. Importing and bundling JSON files leads to failure before `@pika/plugin-bundle-node` can execute
 2. I just want JSON files to be bundled, I don't need the every node module injected to `dist-node/index.js`
 3. No way to control which rollup plugins are executed by pika
-
-## Limitations
-Currently this works with `@pika/plugin-ts-standard-pkg`. The standard `@pika/plugin-standard-pkg` is **not supported**.
 
 ## Install
 
@@ -44,7 +44,8 @@ Note: `@pika/pack` and `@pika/plugin-build-node` are peer dependencies -- you ne
                 {
                     "plugins": [
                         "@rollup/plugin-beep",
-                        [ // configure plugins using duples -- kind of like how we configure @babel/preset-env ;)
+                        [
+                            // configure plugins using duples -- kind of like how we configure @babel/preset-env ;)
                             "@rollup/plugin-strip",
                             {
                                 "sourceMap": false
@@ -63,11 +64,11 @@ For more information about @pika/pack & help getting started, [check out the mai
 ## Options
 
 | Option             | Type     | Default Value | Description                                                                                                                                                                                        |
-|--------------------|----------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `"sourcemap"`      | boolean  | `true`          | Adds a [source map](https://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) for this build.                                                                                            |
-| `"minNodeVersion"` | string   | `"8"`           | This plugin will build your package for the current minimum [Node.js LTS](https://github.com/nodejs/Release) major version. This option allows you to target later versions of Node.js only.       |
-| `"entrypoint"`     | string   | `"main"`        | Customize the package.json manifest entrypoint set by this plugin. Accepts either a string, an array of strings, or `null` to disable entrypoint. Changing this is not recommended for most usage. |
-| `"plugins"`        | string[] | `[]`            | Configure rollup by adding extra plugins. Be sure to install all related rollup plugins otherwise the build will fail!                                                                             |
+| ------------------ | -------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `"sourcemap"`      | boolean  | `true`        | Adds a [source map](https://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) for this build.                                                                                            |
+| `"minNodeVersion"` | string   | `"8"`         | This plugin will build your package for the current minimum [Node.js LTS](https://github.com/nodejs/Release) major version. This option allows you to target later versions of Node.js only.       |
+| `"entrypoint"`     | string   | `"main"`      | Customize the package.json manifest entrypoint set by this plugin. Accepts either a string, an array of strings, or `null` to disable entrypoint. Changing this is not recommended for most usage. |
+| `"plugins"`        | string[] | `[]`          | Configure rollup by adding extra plugins. Be sure to install all related rollup plugins otherwise the build will fail!                                                                             |
 
 ## Result
 
@@ -76,3 +77,39 @@ For more information about @pika/pack & help getting started, [check out the mai
 3. Bundles all JSON files by default
 4. Transpiled to run on Node.js LTS (Currently, supports Node.js version v6+)
 5. Adds a "main" entrypoint to your built `package.json` manifest.
+
+## Using with `@pika/plugin-standard-pkg`
+
+`@djthoms/plugin-build-node` is not intended to be used with `@pika/plugin-standard-pkg`. If you want to import JSON files, for example, you can accomplish this by tweaking your pipeline and `.babelrc`:
+
+```json
+{
+    "plugins": [
+        "babel-plugin-inline-json-import"
+    ]
+}
+```
+
+[`babel-plugin-inline-json-import`](https://www.npmjs.com/package/babel-plugin-inline-json-import) is a small babel plugin that works with babel 6/7 and in-lines your JSON files. Heed caution when using this since it will blindly import **everything** and bundle it inside your source!
+
+and in your `package.json`
+
+```json
+{
+    "@pika/pack": {
+        "pipeline": [
+            [
+                "@pika/plugin-standard-pkg",
+                {
+                    "exclude": ["**/*.json"]
+                }
+            ],
+            [
+                "@pika/plugin-build-node"
+            ]
+        ]
+    },
+}
+```
+
+We want to be sure we _ignore_ all json files otherwise `@pika/plugin-build-node` will try and resolve them during the rollup process.
