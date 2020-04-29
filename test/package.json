@@ -6,6 +6,7 @@
     "private": true,
     "scripts": {
         "build": "rm -rf pkg && ../node_modules/.bin/pika-pack build",
+        "pretest": "npm run build",
         "test": "node assert.js"
     },
     "@pika/pack": {
