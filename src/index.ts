@@ -23,6 +23,7 @@ type BuilderOptions = PikaBuilderOptions & {
         minNodeVersion?: string;
         entrypoint?: string | string[] | null;
         plugins?: Plugins;
+        debug?: boolean;
     };
 };
 
@@ -52,54 +53,62 @@ export async function build({ out, reporter, options = {} }: BuilderOptions): Pr
     const writeToNode = path.join(out, 'dist-node', 'index.js');
     const plugins = processPlugins(options.plugins);
 
-    const result = await rollup({
-        input: path.join(out, 'dist-src/index.js'),
-        external: builtinModules as string[],
-        plugins: [
-            rollupBabel({
-                babelrc: false,
-                compact: false,
-                presets: [
-                    [
-                        babelPresetEnv,
-                        {
-                            modules: false,
-                            targets: { node: options.minNodeVersion || DEFAULT_MIN_NODE_VERSION },
-                            spec: true,
-                        },
+    try {
+        const result = await rollup({
+            input: path.join(out, 'dist-src/index.js'),
+            external: builtinModules as string[],
+            plugins: [
+                rollupBabel({
+                    babelrc: false,
+                    compact: false,
+                    presets: [
+                        [
+                            babelPresetEnv,
+                            {
+                                modules: false,
+                                targets: {
+                                    node: options.minNodeVersion || DEFAULT_MIN_NODE_VERSION,
+                                },
+                                spec: true,
+                            },
+                        ],
                     ],
-                ],
-                plugins: [
-                    babelPluginDynamicImport,
-                    babelPluginDynamicImportSyntax,
-                    babelPluginImportMetaSyntax,
-                ],
-            }),
-            json({
-                compact: true,
-                indent: '\t',
-                namedExports: true,
-            }),
-            ...plugins,
-        ],
-        onwarn: (warning, defaultOnWarnHandler) => {
-            // Unresolved external imports are expected
-            if (
-                warning.code === 'UNRESOLVED_IMPORT' &&
-                !(warning.source.startsWith('./') || warning.source.startsWith('../'))
-            ) {
-                return;
-            }
-            defaultOnWarnHandler(warning);
-        },
-    });
+                    plugins: [
+                        babelPluginDynamicImport,
+                        babelPluginDynamicImportSyntax,
+                        babelPluginImportMetaSyntax,
+                    ],
+                }),
+                json({
+                    compact: true,
+                    indent: '\t',
+                    namedExports: true,
+                }),
+                ...plugins,
+            ],
+            onwarn: (warning, defaultOnWarnHandler) => {
+                // Unresolved external imports are expected
+                if (
+                    warning.code === 'UNRESOLVED_IMPORT' &&
+                    !(warning.source.startsWith('./') || warning.source.startsWith('../'))
+                ) {
+                    return;
+                }
+                defaultOnWarnHandler(warning);
+            },
+        });
 
-    await result.write({
-        file: writeToNode,
-        format: 'cjs',
-        exports: 'named',
-        sourcemap: options.sourcemap === undefined ? true : options.sourcemap,
-    });
+        await result.write({
+            file: writeToNode,
+            format: 'cjs',
+            exports: 'named',
+            sourcemap: options.sourcemap === undefined ? true : options.sourcemap,
+        });
 
-    reporter.created(writeToNode, 'main');
+        reporter.created(writeToNode, 'main');
+    } catch (e) {
+        if (options.debug) {
+            console.error(e);
+        }
+    }
 }

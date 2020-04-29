@@ -36,9 +36,7 @@ Note: `@pika/pack` and `@pika/plugin-build-node` are peer dependencies -- you ne
     "version": "1.0.0",
     "@pika/pack": {
         "pipeline": [
-            [
-                "@pika/plugin-ts-standard-pkg"
-            ],
+            ["@pika/plugin-ts-standard-pkg"],
             [
                 "@djthoms/pika-plugin-build-node", // calls @pika/plugin-build-node internally
                 {
@@ -69,6 +67,7 @@ For more information about @pika/pack & help getting started, [check out the mai
 | `"minNodeVersion"` | string   | `"8"`         | This plugin will build your package for the current minimum [Node.js LTS](https://github.com/nodejs/Release) major version. This option allows you to target later versions of Node.js only.       |
 | `"entrypoint"`     | string   | `"main"`      | Customize the package.json manifest entrypoint set by this plugin. Accepts either a string, an array of strings, or `null` to disable entrypoint. Changing this is not recommended for most usage. |
 | `"plugins"`        | string[] | `[]`          | Configure rollup by adding extra plugins. Be sure to install all related rollup plugins otherwise the build will fail!                                                                             |
+| `"debug"`          | boolean  |               | Set true to enable debugging info on build failures                                                                                                                                                |
 
 ## Result
 
@@ -84,9 +83,7 @@ For more information about @pika/pack & help getting started, [check out the mai
 
 ```json
 {
-    "plugins": [
-        "babel-plugin-inline-json-import"
-    ]
+    "plugins": ["babel-plugin-inline-json-import"]
 }
 ```
 
@@ -104,11 +101,9 @@ and in your `package.json`
                     "exclude": ["**/*.json"]
                 }
             ],
-            [
-                "@pika/plugin-build-node"
-            ]
+            ["@pika/plugin-build-node"]
         ]
-    },
+    }
 }
 ```
 
