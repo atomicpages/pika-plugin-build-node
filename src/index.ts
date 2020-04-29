@@ -23,7 +23,7 @@ type BuilderOptions = PikaBuilderOptions & {
         minNodeVersion?: string;
         entrypoint?: string | string[] | null;
         plugins?: Plugins;
-        debug?: boolean;
+        debug?: boolean | 'trace';
     };
 };
 
@@ -108,7 +108,9 @@ export async function build({ out, reporter, options = {} }: BuilderOptions): Pr
         reporter.created(writeToNode, 'main');
     } catch (e) {
         if (options.debug) {
-            console.error(e);
+            console.error(options.debug === 'trace' ? e : e.message);
         }
+
+        process.exit(1);
     }
 }
