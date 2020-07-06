@@ -6,8 +6,8 @@ import babelPresetEnv from '@babel/preset-env';
 import babelPluginDynamicImport from 'babel-plugin-dynamic-import-node-babel-7';
 import builtinModules from 'builtin-modules';
 
-import json from '@rollup/plugin-json';
-import rollupBabel from 'rollup-plugin-babel';
+import json, { RollupJsonOptions } from '@rollup/plugin-json';
+import babel from '@rollup/plugin-babel';
 
 export { manifest, beforeJob } from '@pika/plugin-build-node';
 
@@ -24,6 +24,7 @@ type BuilderOptions = PikaBuilderOptions & {
         entrypoint?: string | string[] | null;
         plugins?: Plugins;
         debug?: boolean | 'trace';
+        jsonConfig?: RollupJsonOptions;
     };
 };
 
@@ -58,7 +59,11 @@ export async function build({ out, reporter, options = {} }: BuilderOptions): Pr
             input: path.join(out, 'dist-src/index.js'),
             external: builtinModules as string[],
             plugins: [
-                rollupBabel({
+                json({
+                    compact: true,
+                    ...options.jsonConfig,
+                }),
+                babel({
                     babelrc: false,
                     compact: false,
                     presets: [
@@ -79,11 +84,6 @@ export async function build({ out, reporter, options = {} }: BuilderOptions): Pr
                         babelPluginImportMetaSyntax,
                     ],
                 }),
-                json({
-                    compact: true,
-                    indent: '\t',
-                    namedExports: true,
-                }),
                 ...plugins,
             ],
             onwarn: (warning, defaultOnWarnHandler) => {
@@ -94,6 +94,7 @@ export async function build({ out, reporter, options = {} }: BuilderOptions): Pr
                 ) {
                     return;
                 }
+
                 defaultOnWarnHandler(warning);
             },
         });
