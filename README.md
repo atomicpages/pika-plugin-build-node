@@ -49,7 +49,10 @@ Note: `@pika/pack` and `@pika/plugin-build-node` are peer dependencies -- you ne
                                 "sourceMap": false
                             }
                         ]
-                    ]
+                    ],
+                    "jsonConfig": {
+                        "preferConst": true
+                    }
                 }
             ]
         ]
